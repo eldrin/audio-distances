@@ -13,9 +13,9 @@ from functools import partial
 import numpy as np
 from sklearn.mixture import GaussianMixture
 
-from music_dist import dtw_fast, simple_fast, mckl
-from music_dist.config import Config as cfg
-from music_dist.utils import parmap
+from audiodistances import dtw_fast, simple_fast, mckl
+from audiodistances.config import Config as cfg
+from audiodistances.utils import parmap
 
 simple_fast_ = partial(simple_fast, sub_seq_len=50)
 mckl_ = partial(mckl, n_components=cfg.GMM_COMPONENTS, r=cfg.MC_SAMPLES)

@@ -9,7 +9,7 @@ from functools import partial
 import numpy as np
 import librosa
 
-from music_dist.utils import parmap
+from audiodistances.utils import parmap
 
 
 def _extract_mfcc(fn, out_root, sr=22050, n_mfccs=25):
@@ -21,7 +21,10 @@ def _extract_mfcc(fn, out_root, sr=22050, n_mfccs=25):
         sr (int): sampling rate
         n_mfcc (int): number of coefficients
     """
-    y, sr = librosa.load(fn, sr=22050)
+    if basename(fn).split('.')[-1] == 'npy':
+        y = np.load(fn)
+    else:
+        y, sr = librosa.load(fn, sr=22050)
     M = librosa.feature.mfcc(y, sr, n_mfcc=n_mfccs).T
     out_fn = join(out_root, splitext(basename(fn))[0] + '.npy')
     np.save(out_fn, M)
