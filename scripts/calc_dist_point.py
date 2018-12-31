@@ -65,21 +65,19 @@ def _calc_dist(ij, all_fns, dist_type):
     return (i, j ,(d_ij, d_ji))
 
 
-def process(music_features, num_originals, sample_rate=1,
+def process(music_features, target_index, sample_rate=1,
             dist_type='SIMPLE', n_jobs=1):
     """Calculate pairwise distances between music files
     """
-    fns = music_features
-
-    candidate_pairs = chain.from_iterable((
-        ((i, j) for j in range(len(fns))) for i in range(num_originals)
-    ))
+    # 1) prepare targets
+    candidate_pairs = ((target_index, other_index)
+                       for other_index in range(len(music_features)))
 
     # 2) calculate distances
     print('Main Process!')
     res = parmap(
-        partial(_calc_dist, all_fns=fns, dist_type=dist_type),
-        candidate_pairs, total= num_originals * len(fns),
+        partial(_calc_dist, all_fns=music_features, dist_type=dist_type),
+        candidate_pairs, total= len(music_features),
         verbose=True, n_workers=n_jobs
     )
 
@@ -97,6 +95,9 @@ if __name__ == "__main__":
     parser.add_argument("music_features",
                         help='text file contains all the file name of \
                               music features or gmms (for MCKL)')
+    parser.add_argument("target_index", type=int,
+                        help="index of target original file to calc \
+                              slice of distances")
     parser.add_argument("num_originals", type=int,
                         help='number of original samples from top of \
                               the given feature filename list')
@@ -108,11 +109,16 @@ if __name__ == "__main__":
     parser.add_argument("--n-jobs", type=int, default=1, help='number of parallel jobs')
     args = parser.parse_args()
 
+    # sanity check
+    if args.target_index >= args.num_originals:
+        raise ValueError('[ERROR] target item should be one of the \
+                          original items! (target_index >= num_originals)')
+
     # load the file list
     with open(args.music_features) as f:
         fns = [l.replace('\n', '') for l in f.readlines()]
 
-    result = process(fns, args.num_originals,
+    result = process(fns, args.target_index, args.num_originals,
                      dist_type=args.distance, n_jobs=args.n_jobs)
 
     # write the result file

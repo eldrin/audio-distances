@@ -10,8 +10,8 @@ import pickle as pkl
 import numpy as np
 from sklearn.mixture import GaussianMixture
 
-from music_dist.utils import parmap
-from music_dist.config import Config as cfg
+from audiodistances.utils import parmap
+from audiodistances.config import Config as cfg
 
 
 def _fit_gmm(fn, out_root):
