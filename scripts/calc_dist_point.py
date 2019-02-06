@@ -42,7 +42,7 @@ def _calc_dist(ij, all_fns, dist_type):
         ij (tuple of int): index of target items
         all_fns (list of str): filename list
         dist_type (str): type of distance {'MCKL', 'SIMPLE', 'DTW'}
-    
+
     Returns:
         float: distance
     """
@@ -108,6 +108,9 @@ if __name__ == "__main__":
     parser.add_argument("out_fn", help='filename of dump output file')
     parser.add_argument("--n-jobs", type=int, default=1, help='number of parallel jobs')
     args = parser.parse_args()
+
+    # make sure that the script only using assigned number of cores
+    os.environ['MKL_NUM_THREADS'] = str(args.n_jobs)
 
     # sanity check
     if args.target_index >= args.num_originals:
