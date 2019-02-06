@@ -38,7 +38,7 @@ def fit_gmms(fns, out_root, n_jobs=1):
     """
     parmap(
         partial(_fit_gmm, out_root=out_root),
-        fns, n_workers=n_jobs, verbose=True
+        fns, total=len(fns), n_workers=n_jobs, verbose=True
     )
 
 
