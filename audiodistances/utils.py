@@ -22,7 +22,7 @@ def parmap(func, iterable, total=None, n_workers=2, verbose=False):
     if n_workers == 1:
         if verbose:
             iterable = tqdm_(iterable)
-        return map(func, iterable)
+        return list(map(func, iterable))
     else:
         with Pool(processes=n_workers) as p:
             if verbose:
